@@ -5,58 +5,58 @@ on:
     workflows: [dev-test]
     types:
       - completed
-      jobs:
-        on-success:
-          runs-on: ubuntu-latest
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
 
-          steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-            - run: echo 'The triggering workflow passed'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - run: echo 'The triggering workflow passed'
 
-        build-api-staging:
-          runs-on: ubuntu-latest
+  #   build-api-staging:
+  #     runs-on: ubuntu-latest
 
-          if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  #     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
-          steps:
-            - name: Print message
-              run: echo "build-api"
+  #     steps:
+  #       - name: Print message
+  #         run: echo "build-api"
 
-        deploy-api-staging:
-          needs: [build-api-staging]
-          runs-on: ubuntu-latest
-          steps:
-            - name: Print message
-              run: echo "deploy-api (staging)"
+  #   deploy-api-staging:
+  #     needs: [build-api-staging]
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - name: Print message
+  #         run: echo "deploy-api (staging)"
 
-        migrate-api-staging:
-          needs: [build-api-staging]
-          runs-on: ubuntu-latest
-          steps:
-            - name: Print message
-              run: echo "migrate-api (staging)"
+  #   migrate-api-staging:
+  #     needs: [build-api-staging]
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - name: Print message
+  #         run: echo "migrate-api (staging)"
 
-        deploy-ops-portal-frontend-staging:
-          needs: [build-api-staging]
-          runs-on: ubuntu-latest
-          steps:
-            - name: Print message
-              run: echo "deploy ops portal frontend (staging)"
+  #   deploy-ops-portal-frontend-staging:
+  #     needs: [build-api-staging]
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - name: Print message
+  #         run: echo "deploy ops portal frontend (staging)"
 
-        deploy-school-guide-frontend-staging:
-          needs: [build-api-staging]
-          runs-on: ubuntu-latest
-          steps:
-            - name: Print message
-              run: echo "deploy school guide frontend (staging)"
+  #   deploy-school-guide-frontend-staging:
+  #     needs: [build-api-staging]
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - name: Print message
+  #         run: echo "deploy school guide frontend (staging)"
 
-        deploy-abacus-frontend-staging:
-          needs: [build-api-staging]
-          runs-on: ubuntu-latest
-          steps:
-            - name: Print message
-              run: echo "deploy abacus frontend (staging)"
+  #   deploy-abacus-frontend-staging:
+  #     needs: [build-api-staging]
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - name: Print message
+  #         run: echo "deploy abacus frontend (staging)"
 
   on-failure:
     runs-on: ubuntu-latest
