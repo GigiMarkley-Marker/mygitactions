@@ -12,3 +12,62 @@ jobs:
         uses: actions/checkout@v2
       - name: Print message
         run: echo "backend"
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Print message
+        run: echo "frontend"
+
+  system-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Print message
+        run: echo "system-check"
+
+  # BUILD AND DEPLOY TO DEV
+
+  build-api-dev:
+    needs: [backend, frontend, system-check]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "build-api"
+
+  deploy-api-dev:
+    needs: [build-api-dev]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "deploy-api (dev)"
+
+  migrate-api-dev:
+    needs: [build-api-dev]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "migrate-api (dev)"
+
+  deploy-ops-portal-frontend-dev:
+    needs: [build-api-dev]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "deploy ops portal frontend (dev)"
+
+  deploy-school-guide-frontend-dev:
+    needs: [build-api-dev]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "deploy school guide frontend (dev)"
+
+  deploy-abacus-frontend-dev:
+    # needs: [build-api-dev]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "deploy abacus frontend (dev)"
