@@ -1,149 +1,40 @@
 name: prod-test
 on:
-  workflow_dispatch:
+  # workflow_dispatch:
   workflow_run:
     workflows: [staging-test]
     types:
       - completed
 jobs:
-  on-success:
+  # on-success:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+  #     - run: echo 'The triggering workflow passed'
+
+  # MANUAL APPROVAL FOR PROD DEPLOYMENT
+  manual-approval-for-prod-deployment:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - run: echo 'The triggering workflow passed'
+      - name: Manual approval prompt
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: { state } } = await github.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'pending',
+              description: 'Manual approval required',
+              environment_url: 'https://example.com'
+            });
+            console.log('Manual approval prompt created');
 
-# MANUAL APPROVAL FOR PROD DEPLOYMENT
-manual-approval-for-prod-deployment:
-  # needs:
-  #   [
-  #     deploy-ops-portal-frontend-staging,
-  #     deploy-school-guide-frontend-staging,
-  #     deploy-abacus-frontend-staging,
-  #   ]
-  runs-on: ubuntu-latest
-  steps:
-    - name: Manual approval prompt
-      uses: actions/github-script@v4
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const { data: { state } } = await github.repos.createDeploymentStatus({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            state: 'pending',
-            description: 'Manual approval required',
-            environment_url: 'https://example.com'
-          });
-          console.log('Manual approval prompt created');
-
-build-api-prod:
-  needs: [manual-approval-for-prod-deployment]
-  runs-on: ubuntu-latest
-  steps:
-    - name: Print message
-      run: echo "build-api"
-# build-api-prod:
-#   needs: [manual-approval-for-prod-deployment]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "build-api"
-
-# deploy-api-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "deploy-api (prod)"
-
-# migrate-api-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "migrate-api (prod)"
-
-# deploy-ops-portal-frontend-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "deploy ops portal frontend (prod)"
-
-# deploy-school-guide-frontend-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "deploy school guide frontend (prod)"
-
-# deploy-abacus-frontend-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "deploy abacus frontend (prod)"
-
-# MANUAL APPROVAL FOR PROD DEPLOYMENT
-# Cant get this to work...
-# manual-approval-for-prod-deployment:
-#   needs: [deploy-ops-portal-frontend-staging, deploy-school-guide-frontend-staging, deploy-abacus-frontend-staging]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Manual approval prompt
-#       uses: actions/github-script@v4
-#       with:
-#         github-token: ${{ secrets.GITHUB_TOKEN }}
-#         script: |
-#           const { data: { state } } = await github.repos.createDeploymentStatus({
-#             owner: context.repo.owner,
-#             repo: context.repo.repo,
-#             state: 'pending',
-#             description: 'Manual approval required',
-#             environment_url: 'https://example.com'
-#           });
-#           console.log('Manual approval prompt created');
-
-# build-api-prod:
-#   needs: [manual-approval-for-prod-deployment]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "build-api"
-
-# deploy-api-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "deploy-api (prod)"
-
-# migrate-api-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "migrate-api (prod)"
-
-# deploy-ops-portal-frontend-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "deploy ops portal frontend (prod)"
-
-# deploy-school-guide-frontend-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "deploy school guide frontend (prod)"
-
-# deploy-abacus-frontend-prod:
-#   needs: [build-api-prod]
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Print message
-#       run: echo "deploy abacus frontend (prod)"
+  build-api-prod:
+    needs: [manual-approval-for-prod-deployment]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "build-api"
