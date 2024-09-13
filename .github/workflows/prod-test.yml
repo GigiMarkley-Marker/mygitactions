@@ -1,5 +1,4 @@
 name: prod-test
-
 on:
   workflow_dispatch:
   workflow_run:
@@ -17,12 +16,12 @@ jobs:
 
 # MANUAL APPROVAL FOR PROD DEPLOYMENT
 manual-approval-for-prod-deployment:
-  needs:
-    [
-      deploy-ops-portal-frontend-staging,
-      deploy-school-guide-frontend-staging,
-      deploy-abacus-frontend-staging,
-    ]
+  # needs:
+  #   [
+  #     deploy-ops-portal-frontend-staging,
+  #     deploy-school-guide-frontend-staging,
+  #     deploy-abacus-frontend-staging,
+  #   ]
   runs-on: ubuntu-latest
   steps:
     - name: Manual approval prompt
@@ -39,6 +38,12 @@ manual-approval-for-prod-deployment:
           });
           console.log('Manual approval prompt created');
 
+build-api-prod:
+  needs: [manual-approval-for-prod-deployment]
+  runs-on: ubuntu-latest
+  steps:
+    - name: Print message
+      run: echo "build-api"
 # build-api-prod:
 #   needs: [manual-approval-for-prod-deployment]
 #   runs-on: ubuntu-latest
