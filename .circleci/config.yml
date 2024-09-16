@@ -58,10 +58,7 @@ jobs:
     docker:
       - image: cimg/base:current
     steps:
-      - checkout
-      - run:
-          name: "Failure of the setup stage"
-          command: "echo Failure of the setup stage"
+      - run: "echo Failure of the setup stage"
 
   dev-build:
     docker:
