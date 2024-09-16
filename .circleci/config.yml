@@ -102,14 +102,12 @@ workflows:
             - dev-build
       - staging-build:
           requires:
-            - dev-build
             - dev-deploy
       - staging-deploy:
           requires:
             - staging-build
       - prod-build:
           requires:
-            - staging-build
             - staging-deploy
       - prod-deploy:
           requires:
