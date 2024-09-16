@@ -53,6 +53,16 @@ jobs:
       - run:
           name: "Test system checks"
           command: "echo Testing system checks"
+
+  setup-failure:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Failure of the setup stage"
+          command: "echo Failure of the setup stage"
+
   dev-build:
     docker:
       - image: cimg/base:current
@@ -112,9 +122,15 @@ jobs:
 workflows:
   dev-staging-prod-single-workflow:
     jobs:
-      - test-backend
-      - test-frontend
-      - system-checks
+      - test-backend:
+        on_fail:
+          - setup-failure
+      - test-frontend:
+        on_fail:
+          - setup-failure
+      - system-checks:
+        on_fail:
+          - setup-failure
       - dev-build:
           requires:
             - test-backend
