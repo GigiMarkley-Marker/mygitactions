@@ -10,7 +10,6 @@ commands:
           name: "Testing a failure"
           command: "echo Testing a failure"
 
-
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
@@ -104,22 +103,22 @@ workflows:
     - system-checks
     - dev-build:
         requires:
-            - test-backend
-            - test-frontend
-            - system-checks  
+          - test-backend
+          - test-frontend
+          - system-checks
     - dev-deploy:
-          requires:
-            - dev-build
-      - staging-build:
-          requires:
-            - dev-deploy
-      - staging-deploy:
-          requires:
-            - staging-build
-      - prod-build:
-          type: approval
-          requires:
-            - staging-deploy
-      - prod-deploy:
-          requires:
-            - prod-build
+        requires:
+          - dev-build
+    - staging-build:
+        requires:
+          - dev-deploy
+    - staging-deploy:
+        requires:
+          - staging-build
+    - prod-build:
+        type: approval
+        requires:
+          - staging-deploy
+    - prod-deploy:
+        requires:
+          - prod-build
