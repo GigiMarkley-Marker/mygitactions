@@ -4,10 +4,22 @@ version: 2.1
 
 commands:
   failure:
+    description: Retry a step when it fails
+    parameters:
+      repo:
+        type: string
+        default: ""
+      when:
+        type: string
+        default: "on_fail"
+
     steps:
       - run:
-          name: "Test failure"
-          command: "echo Testing failure"
+          command: |
+            echo "This ran because the previous step failed"
+            echo "<<parameters.when>>"
+          name: step due to failure
+          when: <<parameters.when>>
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
@@ -21,7 +33,7 @@ jobs:
           name: "Test backend"
           command: "echo Testing backend"
       - failure:
-          name: "Test failure"
+          repo: "TEST"
           when: "on_fail"
 
   test-frontend:
