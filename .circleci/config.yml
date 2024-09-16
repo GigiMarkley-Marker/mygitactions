@@ -185,7 +185,7 @@ workflows:
       #     requires:
       #       - prod-build
 
-      - stage-1:
+      - stage-1
       #     jobs:
       #       - test-backend
       #       - test-frontend
