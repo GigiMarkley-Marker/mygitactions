@@ -14,6 +14,15 @@ jobs:
           name: "Test backend"
           command: "echo Testing backend"
 
+  failure-path:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Testing a failure"
+          command: "echo Testing a failure"
+
   test-frontend:
     docker:
       - image: cimg/base:current
@@ -88,16 +97,20 @@ jobs:
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   dev-staging-prod-single-workflow:
-    jobs:
+    - test-backend:
+        on_fail:
+      -  failure-path
+    - test-frontend
+        on_fail:
+      -  failure-path
+    - system-checks
+        on_fail:
+      -  failure-path
+    - dev-build:
+        requires:
       - test-backend
       - test-frontend
-      - system-checks
-      - dev-build:
-          requires:
-            - test-backend
-            - test-frontend
-            - system-checks
-      - dev-deploy:
+      - system-checks  - dev-deploy:
           requires:
             - dev-build
       - staging-build:
