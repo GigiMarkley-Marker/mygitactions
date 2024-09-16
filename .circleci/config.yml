@@ -5,7 +5,32 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  test-dev-build:
+  test-backend:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test backend"
+          command: "echo Testing backend"
+
+  test-frontend:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test frontend"
+          command: "echo Testing frontend"
+  system-checks:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test system checks"
+          command: "echo Testing system checks"
+  dev-build:
     docker:
       - image: cimg/base:current
     steps:
@@ -14,7 +39,7 @@ jobs:
           name: "Test dev build"
           command: "echo Testing dev build"
 
-  test-dev-deploy:
+  dev-deploy:
     docker:
       - image: cimg/base:current
     steps:
@@ -23,7 +48,7 @@ jobs:
           name: "Test dev deploy"
           command: "echo Testing dev deploy"
 
-  test-staging-build:
+  staging-build:
     docker:
       - image: cimg/base:current
     steps:
@@ -32,7 +57,7 @@ jobs:
           name: "Test staging build"
           command: "echo Testing staging build"
 
-  test-staging-deploy:
+  staging-deploy:
     docker:
       - image: cimg/base:current
     steps:
@@ -41,7 +66,7 @@ jobs:
           name: "Test staging deploy"
           command: "echo Testing staging deploy"
 
-  test-prod-build:
+  prod-build:
     docker:
       - image: cimg/base:current
     steps:
@@ -50,7 +75,7 @@ jobs:
           name: "Test prod build"
           command: "echo Testing prod build"
 
-  test-prod-deploy:
+  prod-deploy:
     docker:
       - image: cimg/base:current
     steps:
@@ -62,36 +87,30 @@ jobs:
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  dev-test-workflow:
-    jobs:
-      - test-dev-build
-      - test-dev-deploy
-
-  staging-test-workflow:
-    jobs:
-      - test-staging-build
-      - test-staging-deploy
-
-  prod-test-workflow:
-    jobs:
-      - test-prod-build
-      - test-prod-deploy
-
   dev-staging-prod-single-workflow:
     jobs:
-      - test-dev-build
-      - test-dev-deploy:
+      - test-backend
+      - test-frontend
+      - system-checks
+      - dev-build:
           requires:
-            - test-dev-build
-      - test-staging-build:
+            - test-backend
+            - test-frontend
+            - system-checks
+      - dev-deploy:
           requires:
-            - test-dev-deploy
-      - test-staging-deploy:
+            - dev-build
+      - staging-build:
           requires:
-            - test-staging-build
-      - test-prod-build:
+            - dev-build
+            - dev-deploy
+      - staging-deploy:
           requires:
-            - test-staging-deploy
-      - test-prod-deploy:
+            - staging-build
+      - prod-build:
           requires:
-            - test-prod-build
+            - staging-build
+            - staging-deploy
+      - prod-deploy:
+          requires:
+            - prod-build
