@@ -2,6 +2,15 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
+commands:
+  failure-path:
+    steps:
+      - checkout
+      - run:
+          name: "Testing a failure"
+          command: "echo Testing a failure"
+
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
@@ -13,15 +22,8 @@ jobs:
       - run:
           name: "Test backend"
           command: "echo Testing backend"
-
-  failure-path:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - run:
-          name: "Testing a failure"
-          command: "echo Testing a failure"
+      - failure-path:
+          when: on_fail
 
   test-frontend:
     docker:
@@ -97,9 +99,7 @@ jobs:
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   dev-staging-prod-single-workflow:
-    - test-backend:
-        on_fail:
-          - failure-path
+    - test-backend
     - test-frontend
     - system-checks
     - dev-build:
