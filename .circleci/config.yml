@@ -1,3 +1,5 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
 commands:
@@ -30,7 +32,6 @@ jobs:
       - run:
           name: "Test frontend"
           command: "echo Testing frontend"
-
   system-checks:
     docker:
       - image: cimg/base:current
@@ -44,7 +45,7 @@ jobs:
     docker:
       - image: cimg/base:current
     steps:
-      - failure
+      - run: "echo Failure of the setup stage"
 
   dev-build:
     docker:
@@ -100,6 +101,8 @@ jobs:
           name: "Test prod deploy"
           command: "echo Testing prod deploy"
 
+# Orchestrate jobs using workflows
+# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   dev-staging-prod-single-workflow:
     jobs:
@@ -107,7 +110,7 @@ workflows:
       - test-frontend
       - system-checks
 
-      # Success path if all tests pass
+      # Success path if all tests and system checks pass
       - dev-build:
           requires:
             - test-backend
@@ -117,18 +120,15 @@ workflows:
           requires:
             - dev-build
 
-      # Failure path: Run if any of the tests or system checks fail
+      # Failure path if any of the tests or system checks fail
       - setup-failure:
           requires:
             - test-backend
             - test-frontend
             - system-checks
-          filters:
-            branches:
-              only:
-                - master # Adjust this based on your use case
+          when: on_fail
 
-      # Continue with the next stages if deployment to dev passes
+      # Success path if dev-deploy passes
       - staging-build:
           requires:
             - dev-deploy
@@ -136,7 +136,7 @@ workflows:
           requires:
             - staging-build
 
-      # Approval before moving to production
+      # Success path if staging-deploy passes
       - prod-build:
           type: approval
           requires:
