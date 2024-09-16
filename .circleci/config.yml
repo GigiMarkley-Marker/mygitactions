@@ -122,22 +122,11 @@ jobs:
 workflows:
   dev-staging-prod-single-workflow:
     jobs:
-      - test-backend:
-          on_fail:
-        - failure:
-            repo: "TEST"
-            when: "on_fail"
-      - test-frontend:
-          on_fail:
-        - failure:
-            repo: "TEST"
-            when: "on_fail"
-      - system-checks:
-          on_fail:
-        - failure:
-            repo: "TEST"
-            when: "on_fail"
+      - test-backend
+      - test-frontend
+      - system-checks
 
+      # Success path if all tests and system checks pass
       - dev-build:
           requires:
             - test-backend
@@ -147,12 +136,23 @@ workflows:
           requires:
             - dev-build
 
+      # Failure path if any of the tests or system checks fail
+      - setup-failure:
+          requires:
+            - test-backend
+            - test-frontend
+            - system-checks
+          when: on_fail
+
+      # Success path if dev-deploy passes
       - staging-build:
           requires:
             - dev-deploy
       - staging-deploy:
           requires:
             - staging-build
+
+      # Success path if staging-deploy passes
       - prod-build:
           type: approval
           requires:
