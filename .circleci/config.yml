@@ -22,6 +22,60 @@ jobs:
           name: "Say hello"
           command: "echo Hello, World!"
 
+  test-dev-build:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test dev build"
+          command: "echo Testing dev build"
+
+  test-dev-deploy:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test dev deploy"
+          command: "echo Testing dev deploy"
+
+  test-staging-build:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test staging build"
+          command: "echo Testing staging build"
+
+  test-staging-deploy:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test staging deploy"
+          command: "echo Testing staging deploy"
+
+  test-prod-build:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test prod build"
+          command: "echo Testing prod build"
+
+  test-prod-deploy:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test prod deploy"
+          command: "echo Testing prod deploy"
+
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
@@ -29,3 +83,18 @@ workflows:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - say-hello
+
+  dev-test-workflow:
+    jobs:
+      - test-dev-build
+      - test-dev-deploy
+
+  staging-test-workflow:
+    jobs:
+      - test-staging-build
+      - test-staging-deploy
+
+  prod-test-workflow:
+    jobs:
+      - test-prod-build
+      - test-prod-deploy
