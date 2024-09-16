@@ -3,7 +3,7 @@
 version: 2.1
 
 commands:
-  failure:
+  failure-command:
     description: Notify failure
     steps:
       - run:
@@ -20,9 +20,11 @@ jobs:
       - run:
           name: "Test backend"
           command: "echo Testing backend"
-      - run:
-          name: "Force failure (for testing)"
-          command: "exit 1" # You can remove this once testing is done
+      # - run:
+      #     name: "Force failure (for testing)"
+      #     command: "exit 1" # You can remove this once testing is done
+      - failure-command:
+          when: on_fail
 
   test-frontend:
     docker:
@@ -126,7 +128,7 @@ workflows:
             - test-backend
             - test-frontend
             - system-checks
-          when: on_fail
+          # when: on_fail
 
       # Success path if dev-deploy passes
       - staging-build:
