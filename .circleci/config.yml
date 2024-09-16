@@ -32,10 +32,11 @@ jobs:
       - run:
           name: "Test backend"
           command: "echo Testing backend"
+          # Force a failure
+          command: "exit 1"
       - failure:
           repo: "TEST"
           when: "on_fail"
-
   test-frontend:
     docker:
       - image: cimg/base:current
