@@ -88,30 +88,28 @@ jobs:
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   dev-staging-prod-single-workflow:
-    - test-backend
-    - test-frontend
-    - system-checks
-    - dev-build:
-        requires:
+    jobs:
       - test-backend
       - test-frontend
       - system-checks
-    - dev-deploy:
-        requires:
-      - dev-build
-    - staging-build:
-        requires:
-      - dev-deploy
-    - staging-deploy:
-        requires:
-      - staging-build
-    - prod-build:
-        requires:
-      - staging-deploy
-        filters:
-      branches:
-        only:
-          - /^manual-trigger$/
-    - prod-deploy:
-        requires:
-      - prod-build
+      - dev-build:
+          requires:
+            - test-backend
+            - test-frontend
+            - system-checks
+      - dev-deploy:
+          requires:
+            - dev-build
+      - staging-build:
+          requires:
+            - dev-deploy
+      - staging-deploy:
+          requires:
+            - staging-build
+      - prod-build:
+          type: approval
+          requires:
+            - staging-deploy
+      - prod-deploy:
+          requires:
+            - prod-build
