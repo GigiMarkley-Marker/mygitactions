@@ -122,33 +122,51 @@ jobs:
 workflows:
   dev-staging-prod-single-workflow:
     jobs:
-      - test-backend:
-        on_fail:
-          - setup-failure
-      - test-frontend:
-        on_fail:
-          - setup-failure
-      - system-checks:
-        on_fail:
-          - setup-failure
-      - dev-build:
-          requires:
+      # - test-backend:
+      #   on_fail:
+      #     - setup-failure
+      # - test-frontend:
+      #   on_fail:
+      #     - setup-failure
+      # - system-checks:
+      #   on_fail:
+      #     - setup-failure
+      # - dev-build:
+      #     requires:
+      #       - test-backend
+      #       - test-frontend
+      #       - system-checks
+      # - dev-deploy:
+      #     requires:
+      #       - dev-build
+      # - staging-build:
+      #     requires:
+      #       - dev-deploy
+      # - staging-deploy:
+      #     requires:
+      #       - staging-build
+      # - prod-build:
+      #     type: approval
+      #     requires:
+      #       - staging-deploy
+      # - prod-deploy:
+      #     requires:
+      #       - prod-build
+
+      - stage-1:
+          jobs:
             - test-backend
             - test-frontend
             - system-checks
-      - dev-deploy:
-          requires:
+      - stage-2:
+          jobs:
             - dev-build
-      - staging-build:
-          requires:
             - dev-deploy
-      - staging-deploy:
-          requires:
+      - stage-3:
+          jobs:
             - staging-build
-      - prod-build:
-          type: approval
-          requires:
             - staging-deploy
-      - prod-deploy:
-          requires:
+      - stage-4:
+          jobs:
             - prod-build
+            - prod-deploy
