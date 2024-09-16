@@ -1,36 +1,30 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 workflows:
   dev-staging-prod-single-workflow:
-    test-backend:
-      requires:
-        - test-frontend
-        - system-checks
-    test-frontend:
-      requires:
-        - test-backend
-        - system-checks
-    system-checks:
-      requires:
-        - test-backend
-        - test-frontend
-    dev-build:
-      requires:
-        - test-backend
-        - test-frontend
-        - system-checks
-    dev-deploy:
-      requires:
-        - dev-build
-    staging-build:
-      requires:
-        - dev-deploy
-    staging-deploy:
-      requires:
-        - staging-build
-    prod-build:
-      type: approval
-      requires:
-        - staging-deploy
-    prod-deploy:
-      requires:
-        - prod-build
+    - test-backend
+    - test-frontend
+    - system-checks
+    - dev-build:
+        requires:
+      - test-backend
+      - test-frontend
+      - system-checks
+    - dev-deploy:
+        requires:
+      - dev-build
+    - staging-build:
+        requires:
+      - dev-deploy
+    - staging-deploy:
+        requires:
+      - staging-build
+    - prod-build:
+        requires:
+      - staging-deploy
+        filters:
+      branches:
+        only:
+          - /^manual-trigger$/
+    - prod-deploy:
+        requires:
+      - prod-build
