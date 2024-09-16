@@ -3,7 +3,7 @@
 version: 2.1
 
 commands:
-  failure-command:
+  failure:
     description: Notify failure
     steps:
       - run:
@@ -23,12 +23,6 @@ jobs:
       - run:
           name: "Force failure (for testing)"
           command: "exit 1" # You can remove this once testing is done
-      # - failure-command:
-      # I want to run that command when the test-backend job fails
-      - run:
-          name: "Failure command"
-          command: "echo Command executed on failure"
-          when: on_fail
 
   test-frontend:
     docker:
@@ -51,7 +45,7 @@ jobs:
     docker:
       - image: cimg/base:current
     steps:
-      - run: "echo Failure of the setup stage"
+      - failure
 
   dev-build:
     docker:
@@ -116,6 +110,17 @@ workflows:
       - test-frontend
       - system-checks
 
+      # Failure path if any of the tests or system checks fail
+      - setup-failure:
+          requires:
+            - test-backend
+            - test-frontend
+            - system-checks
+          filters:
+            branches:
+              only:
+                - master # Adjust based on your use case
+
       # Success path if all tests and system checks pass
       - dev-build:
           requires:
@@ -125,14 +130,6 @@ workflows:
       - dev-deploy:
           requires:
             - dev-build
-
-      # Failure path if any of the tests or system checks fail
-      - setup-failure:
-          requires:
-            - test-backend
-            - test-frontend
-            - system-checks
-          # when: on_fail
 
       # Success path if dev-deploy passes
       - staging-build:
