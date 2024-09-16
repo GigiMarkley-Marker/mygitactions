@@ -79,9 +79,19 @@ workflows:
 
   dev-staging-prod-single-workflow:
     jobs:
-      - test-dev-build:
-          - test-dev-deploy
+      - test-dev-build
+      - test-dev-deploy:
+          requires:
+            - test-dev-build
       - test-staging-build:
-          - test-staging-deploy
+          requires:
+            - test-dev-deploy
+      - test-staging-deploy:
+          requires:
+            - test-staging-build
       - test-prod-build:
-          - test-prod-deploy
+          requires:
+            - test-staging-deploy
+      - test-prod-deploy:
+          requires:
+            - test-prod-build
