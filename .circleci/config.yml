@@ -33,7 +33,7 @@ jobs:
           name: "Test backend"
           command: "echo Testing backend"
           # Force a failure
-          command: "exit 1"
+      - run: exit 1
       - failure:
           repo: "TEST"
           when: "on_fail"
