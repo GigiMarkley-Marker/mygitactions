@@ -100,12 +100,8 @@ workflows:
     - test-backend:
         on_fail:
           - failure-path
-    - test-frontend:
-        on_fail:
-      -  failure-path
-    - system-checks:
-        on_fail:
-      -  failure-path
+    - test-frontend
+    - system-checks
     - dev-build:
         requires:
       - test-backend
