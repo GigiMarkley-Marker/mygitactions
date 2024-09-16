@@ -21,184 +21,130 @@ commands:
           name: step due to failure
           when: <<parameters.when>>
 
-  test-backend:
-    description: "Test backend"
-    steps:
-      - run:
-          name: "Test backend"
-          command: "echo Testing backend"
-
-  test-frontend:
-    description: "Test frontend"
-    steps:
-      - run:
-          name: "Test frontend"
-          command: "echo Testing frontend"
-
-  system-checks:
-    description: "Test system checks"
-    steps:
-      - run:
-          name: "Test system checks"
-          command: "echo Testing system checks"
-
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  stage-1:
+  test-backend:
     docker:
       - image: cimg/base:current
     steps:
       - checkout
       - run:
-          # I want to use the command defined in the commands section
           name: "Test backend"
-          command: test-backend
+          command: "echo Testing backend"
           # Force a failure
+      - run: exit 1
+      - failure:
+          repo: "TEST"
+          when: "on_fail"
+  test-frontend:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test frontend"
+          command: "echo Testing frontend"
+  system-checks:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test system checks"
+          command: "echo Testing system checks"
 
-  # test-backend:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Test backend"
-  #         command: "echo Testing backend"
-  #         # Force a failure
-  #     - run: exit 1
-  #     - failure:
-  #         repo: "TEST"
-  #         when: "on_fail"
-  # test-frontend:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Test frontend"
-  #         command: "echo Testing frontend"
-  # system-checks:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Test system checks"
-  #         command: "echo Testing system checks"
+  setup-failure:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Failure of the setup stage"
+          command: "echo Failure of the setup stage"
 
-  # setup-failure:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Failure of the setup stage"
-  #         command: "echo Failure of the setup stage"
+  dev-build:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test dev build"
+          command: "echo Testing dev build"
 
-  # dev-build:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Test dev build"
-  #         command: "echo Testing dev build"
+  dev-deploy:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test dev deploy"
+          command: "echo Testing dev deploy"
 
-  # dev-deploy:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Test dev deploy"
-  #         command: "echo Testing dev deploy"
+  staging-build:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test staging build"
+          command: "echo Testing staging build"
 
-  # staging-build:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Test staging build"
-  #         command: "echo Testing staging build"
+  staging-deploy:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test staging deploy"
+          command: "echo Testing staging deploy"
 
-  # staging-deploy:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Test staging deploy"
-  #         command: "echo Testing staging deploy"
+  prod-build:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test prod build"
+          command: "echo Testing prod build"
 
-  # prod-build:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Test prod build"
-  #         command: "echo Testing prod build"
-
-  # prod-deploy:
-  #   docker:
-  #     - image: cimg/base:current
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "Test prod deploy"
-  #         command: "echo Testing prod deploy"
+  prod-deploy:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Test prod deploy"
+          command: "echo Testing prod deploy"
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   dev-staging-prod-single-workflow:
     jobs:
-      # - test-backend:
-      #   on_fail:
-      #     - setup-failure
-      # - test-frontend:
-      #   on_fail:
-      #     - setup-failure
-      # - system-checks:
-      #   on_fail:
-      #     - setup-failure
-      # - dev-build:
-      #     requires:
-      #       - test-backend
-      #       - test-frontend
-      #       - system-checks
-      # - dev-deploy:
-      #     requires:
-      #       - dev-build
-      # - staging-build:
-      #     requires:
-      #       - dev-deploy
-      # - staging-deploy:
-      #     requires:
-      #       - staging-build
-      # - prod-build:
-      #     type: approval
-      #     requires:
-      #       - staging-deploy
-      # - prod-deploy:
-      #     requires:
-      #       - prod-build
+      - test-backend
+      - test-frontend
+      - system-checks
 
-      - stage-1
-      #     jobs:
-      #       - test-backend
-      #       - test-frontend
-      #       - system-checks
-      # - stage-2:
-      #     jobs:
-      #       - dev-build
-      #       - dev-deploy
-      # - stage-3:
-      #     jobs:
-      #       - staging-build
-      #       - staging-deploy
-      # - stage-4:
-      #     jobs:
-      #       - prod-build
-      #       - prod-deploy
+      - dev-build:
+          requires:
+            - test-backend
+            - test-frontend
+            - system-checks
+      - dev-deploy:
+          requires:
+            - dev-build
+
+      - staging-build:
+          requires:
+            - dev-deploy
+      - staging-deploy:
+          requires:
+            - staging-build
+      - prod-build:
+          type: approval
+          requires:
+            - staging-deploy
+      - prod-deploy:
+          requires:
+            - prod-build
