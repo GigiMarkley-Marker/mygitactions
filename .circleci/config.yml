@@ -50,9 +50,11 @@ jobs:
       - image: cimg/base:current
     steps:
       - checkout
-      - test-backend
-      - test-frontend
-      - system-checks
+      - run:
+          # I want to use the command defined in the commands section
+          name: "Test backend"
+          command: test-backend
+          # Force a failure
 
   # test-backend:
   #   docker:
