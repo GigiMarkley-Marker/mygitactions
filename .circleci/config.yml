@@ -107,6 +107,7 @@ workflows:
           requires:
             - staging-build
       - prod-build:
+          type: approval
           requires:
             - staging-deploy
       - prod-deploy:
