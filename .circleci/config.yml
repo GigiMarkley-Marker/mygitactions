@@ -32,11 +32,11 @@ jobs:
       - run:
           name: "Test backend"
           command: "echo Testing backend"
-          # Force a failure
-      - run: exit 1
-      - failure:
-          repo: "TEST"
-          when: "on_fail"
+      # # Force a failure
+      # - run: exit 1
+      # - failure:
+      #     repo: "TEST"
+      #     when: "on_fail"
   test-frontend:
     docker:
       - image: cimg/base:current
@@ -122,9 +122,21 @@ jobs:
 workflows:
   dev-staging-prod-single-workflow:
     jobs:
-      - test-backend
-      - test-frontend
-      - system-checks
+      - test-backend:
+          on_fail:
+        - failure:
+            repo: "TEST"
+            when: "on_fail"
+      - test-frontend:
+          on_fail:
+        - failure:
+            repo: "TEST"
+            when: "on_fail"
+      - system-checks:
+          on_fail:
+        - failure:
+            repo: "TEST"
+            when: "on_fail"
 
       - dev-build:
           requires:
