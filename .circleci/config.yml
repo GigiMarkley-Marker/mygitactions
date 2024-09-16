@@ -99,11 +99,11 @@ workflows:
   dev-staging-prod-single-workflow:
     - test-backend:
         on_fail:
-      -  failure-path
-    - test-frontend
+          - failure-path
+    - test-frontend:
         on_fail:
       -  failure-path
-    - system-checks
+    - system-checks:
         on_fail:
       -  failure-path
     - dev-build:
