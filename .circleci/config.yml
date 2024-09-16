@@ -20,9 +20,9 @@ jobs:
       - run:
           name: "Test backend"
           command: "echo Testing backend"
-      # - run:
-      #     name: "Force failure (for testing)"
-      #     command: "exit 1" # You can remove this once testing is done
+      - run:
+          name: "Force failure (for testing)"
+          command: "exit 1" # You can remove this once testing is done
       # - failure-command:
       # I want to run that command when the test-backend job fails
       - run:
