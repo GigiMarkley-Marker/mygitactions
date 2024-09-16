@@ -116,10 +116,6 @@ workflows:
             - test-backend
             - test-frontend
             - system-checks
-          filters:
-            branches:
-              only:
-                - master # Adjust based on your use case
 
       # Success path if all tests and system checks pass
       - dev-build:
