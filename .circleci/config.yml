@@ -23,7 +23,11 @@ jobs:
       # - run:
       #     name: "Force failure (for testing)"
       #     command: "exit 1" # You can remove this once testing is done
-      - failure-command:
+      # - failure-command:
+      # I want to run that command when the test-backend job fails
+      - run:
+          name: "Failure command"
+          command: "echo Command executed on failure"
           when: on_fail
 
   test-frontend:
