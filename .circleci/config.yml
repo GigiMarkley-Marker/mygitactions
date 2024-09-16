@@ -104,9 +104,9 @@ workflows:
     - system-checks
     - dev-build:
         requires:
-          - test-backend
-          - test-frontend
-          - system-checks  
+            - test-backend
+            - test-frontend
+            - system-checks  
     - dev-deploy:
           requires:
             - dev-build
