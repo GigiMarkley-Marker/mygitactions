@@ -38,14 +38,12 @@ jobs:
       - image: cimg/base:current
     steps:
       - checkout
-      # - run:
-      #     name: "Test system checks"
-      #     command: |
-      #       echo Testing system checks
-      #       ./scripts/hello.sh
       - run:
           name: "Make hello.sh executable"
           command: chmod +x scripts/hello.sh
+      - run:
+          name: "Run hello.sh script"
+          command: ./scripts/hello.sh
       - run:
           name: "Run on system checks failure"
           when: on_fail
