@@ -1,0 +1,69 @@
+version: 2.1
+
+orbs:
+  continuation: circleci/continuation@0.3.1
+
+# Define your jobs
+jobs:
+  test-success:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - run:
+          name: "Simulate success"
+          command: "echo 'This job always succeeds' && exit 0"
+
+  test-failure:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - run:
+          name: "Simulate failure"
+          command: "echo 'This job always fails' && exit 1"
+
+# Define a setup workflow
+setup-workflow: &setup-workflow
+  jobs:
+    - continuation/continue:
+        configuration_path: .circleci/main_workflow.yml
+        requires:
+          - approval
+        filters:
+          branches:
+            only: main
+    - hold:
+        type: approval
+        requires:
+          - test-success
+          - test-failure
+
+# Define your workflows
+workflows:
+  setup:
+    jobs:
+      - test-success
+      - test-failure
+      - hold:
+          type: approval
+          requires:
+            - test-success
+            - test-failure
+      - continuation/continue:
+          configuration_path: .circleci/success_workflow.yml
+          requires:
+            - hold
+          condition: << pipeline.parameters.run_success_workflow >>
+      - continuation/continue:
+          configuration_path: .circleci/failing_workflow.yml
+          requires:
+            - hold
+          condition: << pipeline.parameters.run_failure_workflow >>
+
+# Define pipeline parameters
+parameters:
+  run_success_workflow:
+    type: boolean
+    default: false
+  run_failure_workflow:
+    type: boolean
+    default: false
