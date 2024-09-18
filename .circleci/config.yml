@@ -1,145 +1,215 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
+# # Use the latest 2.1 version of CircleCI pipeline process engine.
+# # See: https://circleci.com/docs/configuration-reference
+# version: 2.1
+
+# commands:
+#   failure:
+#     description: Notify failure
+#     steps:
+#       - run:
+#           command: |
+#             echo "One of the previous jobs failed."
+#           name: Failure Notification
+
+# jobs:
+#   test-backend:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - checkout
+#       - run:
+#           name: "Test backend"
+#           command: "echo Testing backend"
+#       - run:
+#           name: "Force failure (for testing)"
+#           command: "exit 1" # You can remove this once testing is done
+
+#   test-frontend:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - checkout
+#       - run:
+#           name: "Test frontend"
+#           command: "echo Testing frontend"
+#   system-checks:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - checkout
+#       - run:
+#           name: "Test system checks"
+#           command: "echo Testing system checks"
+
+#   setup-failure:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - failure
+
+#   dev-build:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - checkout
+#       - run:
+#           name: "Test dev build"
+#           command: "echo Testing dev build"
+
+#   dev-deploy:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - checkout
+#       - run:
+#           name: "Test dev deploy"
+#           command: "echo Testing dev deploy"
+
+#   staging-build:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - checkout
+#       - run:
+#           name: "Test staging build"
+#           command: "echo Testing staging build"
+
+#   staging-deploy:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - checkout
+#       - run:
+#           name: "Test staging deploy"
+#           command: "echo Testing staging deploy"
+
+#   prod-build:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - checkout
+#       - run:
+#           name: "Test prod build"
+#           command: "echo Testing prod build"
+
+#   prod-deploy:
+#     docker:
+#       - image: cimg/base:current
+#     steps:
+#       - checkout
+#       - run:
+#           name: "Test prod deploy"
+#           command: "echo Testing prod deploy"
+
+# # Orchestrate jobs using workflows
+# # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
+# workflows:
+#   dev-staging-prod-single-workflow:
+#     jobs:
+#       - test-backend
+#       - test-frontend
+#       - system-checks
+
+#       # Failure path if any of the tests or system checks fail
+#       - setup-failure:
+#           requires:
+#             - test-backend
+#             - test-frontend
+#             - system-checks
+
+#       # Success path if all tests and system checks pass
+#       - dev-build:
+#           requires:
+#             - test-backend
+#             - test-frontend
+#             - system-checks
+#       - dev-deploy:
+#           requires:
+#             - dev-build
+
+#       # Success path if dev-deploy passes
+#       - staging-build:
+#           requires:
+#             - dev-deploy
+#       - staging-deploy:
+#           requires:
+#             - staging-build
+
+#       # Success path if staging-deploy passes
+#       - prod-build:
+#           type: approval
+#           requires:
+#             - staging-deploy
+#       - prod-deploy:
+#           requires:
+#             - prod-build
+
 version: 2.1
 
-commands:
-  failure:
-    description: Notify failure
-    steps:
-      - run:
-          command: |
-            echo "One of the previous jobs failed."
-          name: Failure Notification
+orbs:
+  continuation: circleci/continuation@0.3.1
 
+# Define your jobs
 jobs:
-  test-backend:
+  test-success:
     docker:
       - image: cimg/base:current
     steps:
-      - checkout
       - run:
-          name: "Test backend"
-          command: "echo Testing backend"
-      - run:
-          name: "Force failure (for testing)"
-          command: "exit 1" # You can remove this once testing is done
+          name: "Simulate success"
+          command: "echo 'This job always succeeds' && exit 0"
 
-  test-frontend:
+  test-failure:
     docker:
       - image: cimg/base:current
     steps:
-      - checkout
       - run:
-          name: "Test frontend"
-          command: "echo Testing frontend"
-  system-checks:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - run:
-          name: "Test system checks"
-          command: "echo Testing system checks"
+          name: "Simulate failure"
+          command: "echo 'This job always fails' && exit 1"
 
-  setup-failure:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - failure
+# Define a setup workflow
+setup-workflow: &setup-workflow
+  jobs:
+    - continuation/continue:
+        configuration_path: .circleci/anchit_main_workflow.yml
+        requires:
+          - approval
+        filters:
+          branches:
+            only: main
+    - hold:
+        type: approval
+        requires:
+          - test-success
+          - test-failure
 
-  dev-build:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - run:
-          name: "Test dev build"
-          command: "echo Testing dev build"
-
-  dev-deploy:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - run:
-          name: "Test dev deploy"
-          command: "echo Testing dev deploy"
-
-  staging-build:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - run:
-          name: "Test staging build"
-          command: "echo Testing staging build"
-
-  staging-deploy:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - run:
-          name: "Test staging deploy"
-          command: "echo Testing staging deploy"
-
-  prod-build:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - run:
-          name: "Test prod build"
-          command: "echo Testing prod build"
-
-  prod-deploy:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - run:
-          name: "Test prod deploy"
-          command: "echo Testing prod deploy"
-
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
+# Define your workflows
 workflows:
-  dev-staging-prod-single-workflow:
+  setup:
     jobs:
-      - test-backend
-      - test-frontend
-      - system-checks
-
-      # Failure path if any of the tests or system checks fail
-      - setup-failure:
-          requires:
-            - test-backend
-            - test-frontend
-            - system-checks
-
-      # Success path if all tests and system checks pass
-      - dev-build:
-          requires:
-            - test-backend
-            - test-frontend
-            - system-checks
-      - dev-deploy:
-          requires:
-            - dev-build
-
-      # Success path if dev-deploy passes
-      - staging-build:
-          requires:
-            - dev-deploy
-      - staging-deploy:
-          requires:
-            - staging-build
-
-      # Success path if staging-deploy passes
-      - prod-build:
+      - test-success
+      - test-failure
+      - hold:
           type: approval
           requires:
-            - staging-deploy
-      - prod-deploy:
+            - test-success
+            - test-failure
+      - continuation/continue:
+          configuration_path: .circleci/success_workflow.yml
           requires:
-            - prod-build
+            - hold
+          condition: << pipeline.parameters.run_success_workflow >>
+      - continuation/continue:
+          configuration_path: .circleci/failing_workflow.yml
+          requires:
+            - hold
+          condition: << pipeline.parameters.run_failure_workflow >>
+
+# Define pipeline parameters
+parameters:
+  run_success_workflow:
+    type: boolean
+    default: false
+  run_failure_workflow:
+    type: boolean
+    default: false

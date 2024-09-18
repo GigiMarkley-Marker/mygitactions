@@ -25,7 +25,7 @@ jobs:
 setup-workflow: &setup-workflow
   jobs:
     - continuation/continue:
-        configuration_path: .circleci/main_workflow.yml
+        configuration_path: .circleci/anchit_main_workflow.yml
         requires:
           - approval
         filters:
