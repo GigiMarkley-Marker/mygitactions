@@ -43,7 +43,7 @@ jobs:
       #     command: |
       #       echo Testing system checks
       #       ./scripts/hello.sh
-    - run:
+      - run:
           name: "Make hello.sh executable"
           command: chmod +x scripts/hello.sh
       - run:
