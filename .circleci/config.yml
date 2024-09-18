@@ -39,11 +39,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Make hello.sh executable"
-          command: chmod +x scripts/hello.sh
-      - run:
-          name: "Run hello.sh script"
-          command: ./scripts/hello.sh
+          name: "Example of how to run a separate script"
+          command: |
+            chmod +x scripts/hello.sh && ./scripts/hello.sh
       - run:
           name: "Run on system checks failure"
           when: on_fail
