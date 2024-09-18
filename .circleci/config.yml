@@ -37,6 +37,11 @@ jobs:
       - run:
           name: "Test frontend"
           command: "echo Testing frontend"
+      - run:
+          name: "Run on frontend failure"
+          when: on_fail # This step will only run if the previous step fails
+          command: echo "Running failure steps because frontend test failed."
+
   system-checks:
     docker:
       - image: cimg/base:current
@@ -45,12 +50,10 @@ jobs:
       - run:
           name: "Test system checks"
           command: "echo Testing system checks"
-
-  setup-failure:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - failure
+      - run:
+          name: "Run on system checks failure"
+          when: on_fail # This step will only run if the previous step fails
+          command: echo "Running failure steps because system checks failed."
 
   # DEV DEPLOYMENT JOBS
   dev-build:
@@ -117,13 +120,6 @@ workflows:
       - test-backend
       - test-frontend
       - system-checks
-
-      # Failure path if any of the tests or system checks fail
-      - setup-failure:
-          requires:
-            - test-backend
-            - test-frontend
-            - system-checks
 
       # Success path if all tests and system checks pass
       - dev-build:
