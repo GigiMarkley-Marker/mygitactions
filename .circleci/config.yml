@@ -171,7 +171,7 @@ jobs:
 setup-workflow: &setup-workflow
   jobs:
     - continuation/continue:
-        configuration_path: .circleci/anchit_main_workflow.yml
+        configuration_path: .circleci/main_workflow.yml
         requires:
           - approval
         filters:
@@ -195,12 +195,12 @@ workflows:
             - test-success
             - test-failure
       - continuation/continue:
-          configuration_path: .circleci/anchit_success_workflow.yml
+          configuration_path: .circleci/success_workflow.yml
           requires:
             - hold
           condition: << pipeline.parameters.run_success_workflow >>
       - continuation/continue:
-          configuration_path: .circleci/anchit_failing_workflow.yml
+          configuration_path: .circleci/failure_workflow.yml
           requires:
             - hold
           condition: << pipeline.parameters.run_failure_workflow >>

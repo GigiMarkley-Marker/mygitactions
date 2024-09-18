@@ -27,10 +27,10 @@ workflows:
       - continuation/continue:
           requires:
             - determine-workflow
-          configuration_path: .circleci/anchit_success_workflow.yml
+          configuration_path: .circleci/success_workflow.yml
           condition: << pipeline.parameters.run_success_workflow >>
       - continuation/continue:
           requires:
             - determine-workflow
-          configuration_path: .circleci/anchit_failure_workflow.yml
+          configuration_path: .circleci/failure_workflow.yml
           condition: << pipeline.parameters.run_failure_workflow >>
