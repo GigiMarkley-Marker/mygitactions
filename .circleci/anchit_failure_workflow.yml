@@ -1,0 +1,16 @@
+version: 2.1
+
+jobs:
+  next-job:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "Next job"
+          command: "echo This workflow should fail!"
+
+workflows:
+  next-workflow:
+    jobs:
+      - next-job
