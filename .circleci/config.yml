@@ -198,12 +198,12 @@ workflows:
           configuration_path: .circleci/success_workflow.yml
           requires:
             - hold
-          condition: << pipeline.parameters.run_success_workflow >>
+          # condition: << pipeline.parameters.run_success_workflow >>
       - continuation/continue:
           configuration_path: .circleci/failing_workflow.yml
           requires:
             - hold
-          condition: << pipeline.parameters.run_failure_workflow >>
+          # condition: << pipeline.parameters.run_failure_workflow >>
 
 # Define pipeline parameters
 parameters:
