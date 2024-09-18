@@ -2,15 +2,6 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-commands:
-  failure:
-    description: Notify failure
-    steps:
-      - run:
-          command: |
-            echo "One of the previous jobs failed."
-          name: Failure Notification
-
 jobs:
   # SETUP JOBS
   test-backend:
@@ -50,9 +41,9 @@ jobs:
       - run:
           name: "Test system checks"
           command: |
-        echo Testing system checks
-        scripts/hello.sh
-          
+            echo Testing system checks
+            ./scripts/hello.sh
+
       - run:
           name: "Run on system checks failure"
           when: on_fail
