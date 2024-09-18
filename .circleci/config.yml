@@ -195,12 +195,12 @@ workflows:
             - test-success
             - test-failure
       - continuation/continue:
-          configuration_path: .circleci/success_workflow.yml
+          configuration_path: .circleci/anchit_success_workflow.yml
           requires:
             - hold
           condition: << pipeline.parameters.run_success_workflow >>
       - continuation/continue:
-          configuration_path: .circleci/failing_workflow.yml
+          configuration_path: .circleci/anchit_failing_workflow.yml
           requires:
             - hold
           condition: << pipeline.parameters.run_failure_workflow >>
