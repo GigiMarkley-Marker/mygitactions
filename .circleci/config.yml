@@ -49,7 +49,10 @@ jobs:
       - checkout
       - run:
           name: "Test system checks"
-          command: "echo Testing system checks"
+          command: |
+        echo Testing system checks
+        scripts/hello.sh
+          
       - run:
           name: "Run on system checks failure"
           when: on_fail
