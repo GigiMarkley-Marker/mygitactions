@@ -12,6 +12,12 @@ jobs:
       LASTEST_SHA2: << pipeline.git.base_revision >>
     steps:
       - checkout
+      # I want to store the latest git commit in an environment variable
+      - run:
+          name: "Print latest git commit"
+          command: |
+            echo "Latest commit in develop branch: $LASTEST_SHA1"
+            echo "Latest commit in base branch: $LASTEST_SHA2"
       - run:
           name: "Test backend"
           command: |
