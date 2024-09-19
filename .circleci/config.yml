@@ -114,13 +114,13 @@ jobs:
               echo "Testing staging build"
               # Simulate a failure (you can remove this line)
               false || (echo "Backend test failed! Performing alternative action..." && exit 1)
-        - run:
-            name: "Run on staging build failure"
-            when: on_fail
-            command: |
-              echo "Staging build failed. Rolling back dev deployment..."
-              echo "Rolling back to commit: $LAST_COMMIT"
-              git reset --hard $LAST_COMMIT
+        # - run:
+        #     name: "Run on staging build failure"
+        #     when: on_fail
+        #     command: |
+        #       echo "Staging build failed. Rolling back dev deployment..."
+        #       echo "Rolling back to commit: $LAST_COMMIT"
+        #       git reset --hard $LAST_COMMIT
         # - run:
         #     name: "Rerun dev-build and dev-deploy"
         #     when: on_fail
