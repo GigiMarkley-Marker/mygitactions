@@ -94,7 +94,7 @@ jobs:
           command: echo "Running failure steps because dev deploy failed. This would be a good place to send a notification with details to slack."
 
   # STAGING DEPLOYMENT JOBS
-    staging-build:
+  staging-build:
       docker:
         - image: cimg/base:current
       steps:
