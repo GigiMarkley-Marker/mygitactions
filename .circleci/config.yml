@@ -39,23 +39,15 @@ jobs:
     steps:
       - checkout
       - run:
-        name: "Get current branch, current commit, and last commit"
-        command: |
-
-            # BRANCH=$(git rev-parse --abbrev-ref HEAD)
-            # CURRENT_COMMIT=$(git rev-parse HEAD)
-            # LAST_COMMIT=$(git rev-parse HEAD^1)
-            # echo "Current branch: $BRANCH"
-            # echo "Current commit: $CURRENT_COMMIT"
-            # echo "Last commit: $LAST_COMMIT"
-
-          echo "export BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> ~/env_vars.sh
-          echo "export CURRENT_COMMIT=$(git rev-parse HEAD)" >> ~/env_vars.sh
-          echo "export LAST_COMMIT=$(git rev-parse HEAD^1)" >> ~/env_vars.sh
+          name: "Get current branch, current commit, and last commit"
+          command: |
+        echo "export BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> ~/env_vars.sh
+        echo "export CURRENT_COMMIT=$(git rev-parse HEAD)" >> ~/env_vars.sh
+        echo "export LAST_COMMIT=$(git rev-parse HEAD^1)" >> ~/env_vars.sh
       - persist_to_workspace:
           root: ~/
           paths:
-            - env_vars.sh
+        - env_vars.sh
       - run:
           name: "Example of how to run a separate script"
           command: |
