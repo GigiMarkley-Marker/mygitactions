@@ -63,15 +63,15 @@ jobs:
       - image: cimg/base:current
     steps:
       - checkout
-      - attach_workspace:
-        at: ~/
-      - run:
-        name: "Load branch and commit information"
-        command: |
-          source ~/env_vars.sh
-          echo "Branch: $BRANCH"
-          echo "Current Commit: $CURRENT_COMMIT"
-          echo "Last Commit: $LAST_COMMIT"
+      # - attach_workspace:
+      #   at: ~/
+      # - run:
+      #   name: "Load branch and commit information"
+      #   command: |
+      #     source ~/env_vars.sh
+      #     echo "Branch: $BRANCH"
+      #     echo "Current Commit: $CURRENT_COMMIT"
+      #     echo "Last Commit: $LAST_COMMIT"
       - run:
           name: "Test dev build"
           command: "echo Testing dev build"
