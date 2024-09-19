@@ -15,22 +15,13 @@ jobs:
     steps:
       - checkout
       # I want to store the latest git commit in an environment variable
-      # - run:
-      #     name: "Print latest git commit"
-      #     command: |
-      #       echo "Latest commit in develop branch: $LASTEST_SHA1"
-      #       echo "Latest commit in base branch: $LASTEST_SHA2"
       - run:
-          name: Determine commit ID & build branch
-          # determine branch from tag using commit ID.
-          # Note: "git branch -a --contains <tag>" could return multiple entries
-          #       however, since the pipeline runs right after the tag is comminted
-          #       this should not become an issue
-          command:
-            COMMIT=$(git show-ref | grep "${CIRCLE_TAG}" | awk '{print $1}')
-            && TMP=$(git branch -a --contains $COMMIT)
-            && BRANCH="${TMP##*/}"
-            && echo "Building branch $BRANCH"
+          name: "Get current branch and commit"
+          command: |
+            BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            COMMIT=$(git rev-parse HEAD)
+            echo "Current branch: $BRANCH"
+            echo "Current commit: $COMMIT"
       - run:
           name: "Test backend"
           command: |
