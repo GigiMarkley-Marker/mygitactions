@@ -7,6 +7,9 @@ jobs:
   test-backend:
     docker:
       - image: cimg/base:current
+    environment:
+      LASTEST_SHA1: echo -e $(git rev-list -n 1 origin/develop^1)
+      LASTEST_SHA2: << pipeline.git.base_revision >>
     steps:
       - checkout
       - run:
@@ -14,7 +17,7 @@ jobs:
           command: |
             echo "Testing backend"
             # Simulate a failure (you can remove this line)
-            false || (echo "Backend test failed! Performing alternative action..." && exit 1)
+            # false || (echo "Backend test failed! Performing alternative action..." && exit 1)
       - run:
           name: "Run on backend failure"
           when: on_fail
@@ -82,7 +85,10 @@ jobs:
       - checkout
       - run:
           name: "Test staging build"
-          command: "echo Testing staging build"
+          command: |
+            "echo Testing staging build"
+            # Simulate a failure (you can remove this line)
+            # false || (echo "Backend test failed! Performing alternative action..." && exit 1)
       - run:
           name: "Run on staging build failure"
           when: on_fail
