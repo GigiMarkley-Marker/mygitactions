@@ -16,12 +16,14 @@ jobs:
       - checkout
       # I want to store the latest git commit in an environment variable
       - run:
-          name: "Get current branch and commit"
+          name: "Get current branch, current commit, and last commit"
           command: |
             BRANCH=$(git rev-parse --abbrev-ref HEAD)
-            COMMIT=$(git rev-parse HEAD)
+            CURRENT_COMMIT=$(git rev-parse HEAD)
+            LAST_COMMIT=$(git rev-parse HEAD^1)
             echo "Current branch: $BRANCH"
-            echo "Current commit: $COMMIT"
+            echo "Current commit: $CURRENT_COMMIT"
+            echo "Last commit: $LAST_COMMIT"
       - run:
           name: "Test backend"
           command: |
