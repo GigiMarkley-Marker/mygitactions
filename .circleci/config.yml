@@ -8,16 +8,24 @@ jobs:
     docker:
       - image: cimg/base:current
     environment:
-      LASTEST_SHA1: echo -e $(git rev-list -n 1 origin/develop^1)
-      LASTEST_SHA2: << pipeline.git.base_revision >>
+      # LASTEST_SHA1: echo -e $(git rev-list -n 1 origin/develop^1)
+      # LASTEST_SHA2: << pipeline.git.base_revision >>
+      # # CURRENT_SHA: //HEAD is now at b78bf51 testing
+      # HEAD_SHA: << pipeline.git.head_commit >>
     steps:
       - checkout
       # I want to store the latest git commit in an environment variable
+      # - run:
+      #     name: "Print latest git commit"
+      #     command: |
+      #       echo "Latest commit in develop branch: $LASTEST_SHA1"
+      #       echo "Latest commit in base branch: $LASTEST_SHA2"
       - run:
           name: "Print latest git commit"
-          command: |
-            echo "Latest commit in develop branch: $LASTEST_SHA1"
-            echo "Latest commit in base branch: $LASTEST_SHA2"
+          command: COMMIT=$(git show-ref ${CIRCLE_TAG} | awk '{print $1}')
+            && TMP=$(git branch -a --contains $COMMIT)
+            && BRANCH="${TMP##*/}"
+            && echo "Building branch $BRANCH"
       - run:
           name: "Test backend"
           command: |
