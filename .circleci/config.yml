@@ -7,23 +7,8 @@ jobs:
   test-backend:
     docker:
       - image: cimg/base:current
-    environment:
-      # LASTEST_SHA1: echo -e $(git rev-list -n 1 origin/develop^1)
-      # LASTEST_SHA2: << pipeline.git.base_revision >>
-      # # CURRENT_SHA: //HEAD is now at b78bf51 testing
-      # HEAD_SHA: << pipeline.git.head_commit >>
     steps:
       - checkout
-      # I want to store the latest git commit in an environment variable
-      - run:
-          name: "Get current branch, current commit, and last commit"
-          command: |
-            BRANCH=$(git rev-parse --abbrev-ref HEAD)
-            CURRENT_COMMIT=$(git rev-parse HEAD)
-            LAST_COMMIT=$(git rev-parse HEAD^1)
-            echo "Current branch: $BRANCH"
-            echo "Current commit: $CURRENT_COMMIT"
-            echo "Last commit: $LAST_COMMIT"
       - run:
           name: "Test backend"
           command: |
@@ -54,6 +39,16 @@ jobs:
     steps:
       - checkout
       - run:
+        name: "Get current branch, current commit, and last commit"
+        command: |
+          echo "export BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> ~/env_vars.sh
+          echo "export CURRENT_COMMIT=$(git rev-parse HEAD)" >> ~/env_vars.sh
+          echo "export LAST_COMMIT=$(git rev-parse HEAD^1)" >> ~/env_vars.sh
+      - persist_to_workspace:
+        root: ~/
+        paths:
+          - env_vars.sh
+      - run:
           name: "Example of how to run a separate script"
           command: |
             chmod +x scripts/hello.sh && ./scripts/hello.sh
@@ -68,6 +63,15 @@ jobs:
       - image: cimg/base:current
     steps:
       - checkout
+      - attach_workspace:
+        at: ~/
+      - run:
+        name: "Load branch and commit information"
+        command: |
+          source ~/env_vars.sh
+          echo "Branch: $BRANCH"
+          echo "Current Commit: $CURRENT_COMMIT"
+          echo "Last Commit: $LAST_COMMIT"
       - run:
           name: "Test dev build"
           command: "echo Testing dev build"
