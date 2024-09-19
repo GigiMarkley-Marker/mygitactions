@@ -99,19 +99,39 @@ jobs:
       - image: cimg/base:current
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: "Load branch and commit information"
+          command: |
+            source ~/env_vars.sh
+            echo "Branch: $BRANCH"
+            echo "Current Commit: $CURRENT_COMMIT"
+            echo "Last Commit: $LAST_COMMIT"
       - run:
           name: "Test staging build"
           command: |
             "echo Testing staging build"
             # Simulate a failure (you can remove this line)
-            # false || (echo "Backend test failed! Performing alternative action..." && exit 1)
+            false || (echo "Backend test failed! Performing alternative action..." && exit 1)
       - run:
           name: "Run on staging build failure"
           when: on_fail
-          command: echo "Running failure steps because staging build failed. This would be a good place to send a notification with details to slack."
-          # If there is a failure in the staging deployment process, would we want to roleback dev to match?
-
-  staging-deploy:
+          command: |
+            echo "Staging build failed. Rolling back dev deployment..."
+            # Example of using the saved commit for rollback:
+            echo "Rolling back to commit: $LAST_COMMIT"
+            git reset --hard $LAST_COMMIT
+      - run:
+          name: "Rerun dev-build and dev-deploy"
+          when: on_fail
+          command: |
+            echo "Rerunning dev-build and dev-deploy with commit $LAST_COMMIT"
+            curl -u ${CIRCLECI_API_TOKEN}: \
+              -d build_parameters[CIRCLE_JOB]=dev-build \
+              -d build_parameters[CIRCLE_JOB]=dev-deploy \
+              https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/tree/:branch
+                
     docker:
       - image: cimg/base:current
     steps:
