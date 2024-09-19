@@ -112,15 +112,15 @@ jobs:
             echo "Staging build failed. Rolling back dev deployment..."
             echo "Rolling back to commit: $LAST_COMMIT"
             git reset --hard $LAST_COMMIT
-      # - run:
-      #     name: "Rerun dev-build and dev-deploy"
-      #     when: on_fail
-      #     command: |
-      #       echo "Rerunning dev-build and dev-deploy with commit $LAST_COMMIT"
-      #       curl -u ${CIRCLECI_API_TOKEN}: \
-      #         -d build_parameters[CIRCLE_JOB]=dev-build \
-      #         -d build_parameters[CIRCLE_JOB]=dev-deploy \
-      #         https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/tree/:branch
+      - run:
+          name: "Rerun dev-build and dev-deploy"
+          when: on_fail
+          command: |
+            echo "Rerunning dev-build and dev-deploy with commit $LAST_COMMIT"
+            curl -u ${CIRCLECI_API_TOKEN}: \
+              -d build_parameters[CIRCLE_JOB]=dev-build \
+              -d build_parameters[CIRCLE_JOB]=dev-deploy \
+              https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/tree/:branch
   staging-deploy:
     docker:
       - image: cimg/base:current
